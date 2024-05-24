@@ -31,10 +31,14 @@ function App() {
       const pokemonDetails = await Promise.all(
         results.map(async (pokemon) => {
           const details = await axios.get(pokemon.url);
+          const overall = details.data.stats.reduce((total, stat) => total + stat.base_stat, 0);
+          const abilities = details.data.abilities.map((ability) => ability.ability.name).join(", ");
           return {
             name: details.data.name,
             image: details.data.sprites.front_default,
             type: details.data.types.map((typeInfo) => typeInfo.type.name).join(", "),
+            abilities: abilities,
+            overall: overall,
           };
         })
       );
@@ -57,11 +61,16 @@ function App() {
     try {
       const res = await axios.get(`https://pokeapi.co/api/v2/pokemon/${name.toLowerCase()}`);
       const pokemonData = res.data;
+      const overall = pokemonData.stats.reduce((total, stat) => total + stat.base_stat, 0);
+      const abilities = pokemonData.abilities.map((ability) => ability.ability.name).join(", ");
       return [{
         name: pokemonData.name,
         image: pokemonData.sprites.front_default,
         type: pokemonData.types.map((typeInfo) => typeInfo.type.name).join(", "),
+        abilities: abilities,
+        overall: overall,
       }];
+      
     } catch (error) {
       console.log(error);
       return [];
@@ -98,7 +107,7 @@ function App() {
         </div>
         <Container>
           {pokemons.map((pokemon, index) => (
-            <PokeCard key={index} name={pokemon.name} image={pokemon.image} type={pokemon.type} />
+            <PokeCard key={index} name={pokemon.name} image={pokemon.image} type={pokemon.type} overall={pokemon.overall} abilities={pokemon.abilities} />
           ))}
         </Container>
         <div className="w-full mb-10 flex justify-center text-white">

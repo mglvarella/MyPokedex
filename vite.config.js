@@ -6,6 +6,7 @@ import autoprefixer from 'autoprefixer';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  base:"/mypokedex",
   css: {
     preprocessorOptions: {
       css: {
